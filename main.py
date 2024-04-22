@@ -5,12 +5,12 @@ import os
 import logging
 from telegram import Update, ForceReply
 from telegram.constants import ParseMode
-from telegram.ext import Application, Updater, ContextTypes, MessageHandler, CommandHandler, filters, CallbackQueryHandler
+from telegram.ext import Application, Updater, ContextTypes, MessageHandler, CommandHandler, filters, CallbackQueryHandler, CallbackContext
 from keyboard import Keyboard
 from wallet import Wallet
 
 TOKEN  = os.getenv('TOKEN')
-
+TOKEN_NAME = 1
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     reply_markup = Keyboard.menu_keyboard()
@@ -32,16 +32,25 @@ Click on the Refresh button to update your balance.
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text('Help command')
     
-async def buy_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    update.message.reply_text('Enter token to buy')
-    await update.callback_query.edit_message_text('Enter the token name or symbol to buy ..', reply_markup=ForceReply())
+async def user_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if context.user_data.get('state') == TOKEN_NAME :
+        update_or_symbol = update.message.text
+        await update.message.reply_text('Comming soon')
+    
+async def button_clicked(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    if query.data == 'buy':
+        context.user_data['state'] = TOKEN_NAME
+        await query.message.reply_text(text='Enter the token name or symbol to buy ..', reply_markup=ForceReply())
     
 def main():
-    logging.basicConfig(filename='bot_log.log', level=logging.DEBUG )
+    logging.basicConfig(filename='bot_log.log', format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO )
+    logger = logging.getLogger(__name__)
     application = Application.builder().token(TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
-    application.add_handler(CallbackQueryHandler(buy_command, pattern='buy'))
+    application.add_handler(CallbackQueryHandler(button_clicked))
+    application.add_handler(MessageHandler(filters.TEXT, user_reply))
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 
