@@ -1,10 +1,10 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-class Keyboard:
+class Eth_keyboard:
     
     @staticmethod
-    def menu_keyboard():
-        menu_keyboard = InlineKeyboardMarkup(
+    def ethereum_menu_keyboard():
+        ethereum_menu_keyboard = InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(text='Buy', callback_data='buy'),
@@ -20,7 +20,7 @@ class Keyboard:
                 ],
                 [
                     InlineKeyboardButton(text='New Pairs', callback_data='new_pairs'),
-                    InlineKeyboardButton(text='💰 Referrals', callback_data='referrals'),
+                    InlineKeyboardButton(text='Referrals', callback_data='referrals'),
                     InlineKeyboardButton(text='⚙️ Settings', callback_data='settings')
                 ],
                 [
@@ -28,9 +28,15 @@ class Keyboard:
                     InlineKeyboardButton(text='Withdraw', callback_data='withdraw')
                 ],
                 [
-                    InlineKeyboardButton(text='ℹ️ Help', callback_data='help'),
-                    InlineKeyboardButton(text='↻ Refresh', callback_data='refresh')
+                    InlineKeyboardButton(text='✅ Ethereum', callback_data='ethereum'),
+                    InlineKeyboardButton(text='Solana', callback_data='solana')
+                ],
+                [
+                    InlineKeyboardButton(text='Help', callback_data='help'),
+                    InlineKeyboardButton(text='Refresh', callback_data='refresh')
                 ]
             ]
         )
-        return menu_keyboard
+        return ethereum_menu_keyboard
+    
+    
