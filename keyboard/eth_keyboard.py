@@ -40,3 +40,33 @@ class Eth_keyboard:
         return ethereum_menu_keyboard
     
     
+    @staticmethod
+    def ethereum_copy_trade_keyboard():
+        eth_copy_trade_keyboard = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(text='Menu', callback_data='eth_menu'),
+                    InlineKeyboardButton(text='Refresh', callback_data='jj')
+                ],
+                [
+                    InlineKeyboardButton(text='Copy Sell', callback_data='jj')
+                ],
+                [
+                    InlineKeyboardButton(text='0.1 ETH', callback_data='jj'),
+                    InlineKeyboardButton(text='0.5 ETH', callback_data='jj')
+                ], 
+                [
+                    InlineKeyboardButton(text='1 ETH', callback_data='jj'),
+                    InlineKeyboardButton(text='1.5 ETH', callback_data='jj')
+                ],
+                [
+                    InlineKeyboardButton(text='2 ETH', callback_data='jj'),
+                    InlineKeyboardButton(text='✏️ x ETH', callback_data='jj')
+                ],
+                [
+                    InlineKeyboardButton(text='[+] Copy Trade Address', callback_data='copy_trade_address')
+                ]
+            ]
+        )
+        return eth_copy_trade_keyboard
+    

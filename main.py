@@ -5,16 +5,15 @@ import os
 from telegram import Update, ForceReply
 from telegram.constants import ParseMode
 from telegram.ext import Application, Updater, ContextTypes, MessageHandler, CommandHandler, filters, CallbackQueryHandler, CallbackContext
-from keyboard.eth_keyboard import Keyboard
-from config import logger
-from wallet.eth_wallet import Wallet
+from keyboard.eth_keyboard import Eth_keyboard
+from wallet.eth_wallet import Eth_Wallet
 
 TOKEN  = os.getenv('TOKEN')
 TOKEN_NAME = 1
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    reply_markup = Keyboard.ethereum_menu_keyboard()
-    private_key, eth_balance, balance_in_dollars = await Wallet.new_wallet()
+    reply_markup = Eth_keyboard.ethereum_menu_keyboard()
+    private_key, eth_balance, balance_in_dollars = await Eth_Wallet.new_wallet()
     message_text = f"""
         <b>Welcome to Unibot on Ethereum</b>\n
         Introducing a cutting-edge bot crafted exclusively for Ethereum traders. Trade any token instantly right after launch.
@@ -30,7 +29,7 @@ Click on the Refresh button to update your balance.
     )
 
 async def sol_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    reply_markup = Keyboard.solana_menu_keyboard()
+    reply_markup = Eth_keyboard.solana_menu_keyboard()
     query = update.callback_query
     await query.answer()
     message_text =f"""
@@ -53,13 +52,34 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 async def user_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if context.user_data.get('state') == TOKEN_NAME :
         update_or_symbol = update.message.text
-        await Wallet.get_asset_price(update_or_symbol)
+        await Eth_Wallet.get_asset_price(update_or_symbol)
     
 async def button_clicked(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
     if query.data == 'buy':
         context.user_data['state'] = TOKEN_NAME
-        await query.message.reply_text(text='Enter the token name or symbol to buy ..', reply_markup=ForceReply())
+        await query.message.reply_text(text='✏️ Enter the token name or symbol to buy ..', reply_markup=ForceReply())
+    elif query.data =='withdraw':
+        pass
+    elif query.data == 'copy_trade':
+        keyboard = Eth_keyboard.ethereum_copy_trade_keyboard()
+        message_text="""
+                                      = <b>Copy Trade </b> =
+Add wallets to copy trade . Supports ETH
+                                      
+<b>Copytrade Addresses: </b>
+no addresses added.
+                                      """
+        await query.edit_message_text(
+                text=message_text,
+                reply_markup=keyboard,
+                parse_mode=ParseMode.HTML                             
+                                      )
+    elif query.data == 'copy_trade_address':
+        await query.message.reply_text(text='✏️ Enter mirror address to copy trade: ', reply_markup=ForceReply())
+    elif query.data == 'eth_menu':
+        keybaord = Eth_keyboard.ethereum_menu_keyboard()
+        await query.edit_message_text(text='Tranding made easy with Elite bot',reply_markup=keybaord)
     
 def main():
     application = Application.builder().token(TOKEN).build()

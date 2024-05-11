@@ -7,7 +7,6 @@ from web3 import Web3
 from eth_account import Account
 from pybit.unified_trading import HTTP
 import pandas as pd
-from config import logger
 
 network_name = os.getenv('ETHEREUM_NETWORK')
 network_api_key = os.getenv('ETHEREUM_NETWORK_API_KEY')
@@ -16,7 +15,7 @@ bybit_api_secret = os.getenv('BYBIT_API_SECRET')
 session = HTTP(api_key=bybit_api_key, api_secret=bybit_api_secret)
 w3 = Web3(Web3.HTTPProvider(f"https://{network_name}.infura.io/v3/{network_api_key}"))
 
-class Wallet:
+class Eth_Wallet:
     @staticmethod
     async def new_wallet():
         try:
@@ -27,7 +26,7 @@ class Wallet:
             private_key = account.key.hex()
             balance = w3.eth.get_balance(address)
             balance_in_eth = w3.from_wei(balance, 'ether')
-            doller_price = await Wallet.get_eth_current_price()
+            doller_price = await Eth_Wallet.get_eth_current_price()
             balance_in_dollars = doller_price * float(balance_in_eth)
 
             # create solana account
