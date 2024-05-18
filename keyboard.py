@@ -1,11 +1,10 @@
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 
-class Sol_Keyboard:
-
-
+class Eth_keyboard:
+    
     @staticmethod
-    def solana_menu_keyboard():
-        solana_menu_keyboard = InlineKeyboardMarkup(
+    def ethereum_menu_keyboard():
+        ethereum_menu_keyboard = InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(text='Buy', callback_data='buy'),
@@ -29,46 +28,41 @@ class Sol_Keyboard:
                     InlineKeyboardButton(text='Withdraw', callback_data='withdraw')
                 ],
                 [
-                    InlineKeyboardButton(text='Ethereum', callback_data='ethereum'),
-                    InlineKeyboardButton(text='✅Solana', callback_data='solana')
-                ],
-                [
                     InlineKeyboardButton(text='Help', callback_data='help'),
                     InlineKeyboardButton(text='Refresh', callback_data='refresh')
                 ]
             ]
         )
-        return solana_menu_keyboard
+        return ethereum_menu_keyboard
+    
     
     @staticmethod
-    def buy_sol():
-        buy_sol = InlineKeyboardMarkup(
+    def ethereum_copy_trade_keyboard():
+        eth_copy_trade_keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(text='← Back', callback_data=''),
-                    InlineKeyboardButton(text='Refresh', callback_data='')
+                    InlineKeyboardButton(text='Menu', callback_data='eth_menu'),
+                    InlineKeyboardButton(text='Refresh', callback_data='jj')
                 ],
                 [
-                    InlineKeyboardButton(text='Swap', callback_data=''),
-                    InlineKeyboardButton(text='Limit', callback_data=''),
-                    InlineKeyboardButton(text='DCA', callback_data='')
+                    InlineKeyboardButton(text='Copy Sell', callback_data='jj')
                 ],
                 [
-                    InlineKeyboardButton(text='0.5 SOL', callback_data=''),
-                    InlineKeyboardButton(text='1 SOL', callback_data=''),
-                    InlineKeyboardButton(text='3 SOL', callback_data='')
+                    InlineKeyboardButton(text='0.1 ETH', callback_data='jj'),
+                    InlineKeyboardButton(text='0.5 ETH', callback_data='jj')
+                ], 
+                [
+                    InlineKeyboardButton(text='1 ETH', callback_data='jj'),
+                    InlineKeyboardButton(text='1.5 ETH', callback_data='jj')
                 ],
                 [
-                    InlineKeyboardButton(text='5 SOL', callback_data=''),
-                    InlineKeyboardButton(text='10 SOL', callback_data=''),
-                    InlineKeyboardButton(text='x SOL', callback_data='')
+                    InlineKeyboardButton(text='2 ETH', callback_data='jj'),
+                    InlineKeyboardButton(text='✏️ x ETH', callback_data='jj')
                 ],
                 [
-                    InlineKeyboardButton(text='15% Slippage', callback_data=''),
-                    InlineKeyboardButton(text='X Slippage', callback_data=''),
-                ],
-                [
-                    InlineKeyboardButton(text='Buy', callback_data='')
+                    InlineKeyboardButton(text='[+] Copy Trade Address', callback_data='copy_trade_address')
                 ]
             ]
         )
+        return eth_copy_trade_keyboard
+    
