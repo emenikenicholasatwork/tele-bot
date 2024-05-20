@@ -24,7 +24,7 @@ class ELiteBot:
 Introducing a cutting-edge bot crafted exclusively for easy execution & surveillance of crypto trading.
 
 Your Ethereum Wallet:
-I successfully created an Ethereum account for you and this is your account address <code>{address}</code> (Tap to copy)
+<code>{address}</code> (Tap to copy)
 Balance: <code>0.0 ETH ($0)</code>
 
 Fund your wallet and start trading
@@ -60,9 +60,9 @@ Fund your wallet and start trading
         )
         
         reply = await update.message.reply_text(text=text, reply_markup=inline_keyboard, parse_mode=ParseMode.HTML)
-        print(reply)
+        if reply:
+            print(f'massage sent successfully: {reply.to_dict()}')
     
     async def buy_cmd(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
          answer = await update.message.reply_text(text="✏️ Enter the token address you want to buy: ")
          print(answer)
-            

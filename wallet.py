@@ -16,7 +16,7 @@ network_api_key = os.getenv('ETHEREUM_NETWORK_API_KEY')
 # session = HTTP(api_key=bybit_api_key, api_secret=bybit_api_secret)
 w3 = Web3(Web3.HTTPProvider(f"https://{network_name}.infura.io/v3/{network_api_key}"))
 
-async def create_new_account(telegram_user_id):
+def create_new_account(telegram_user_id):
     try:
         address = get_wallet_address_from_DB(telegram_user_id)
         if address == None:
@@ -31,10 +31,12 @@ async def create_new_account(telegram_user_id):
         print(e)
             
     
-async def get_asset_price():
+def get_token_price(token):
     try:
         ticker = exchange.fetch_ticker("BTC/USDT")
         print(ticker)
         return ticker
     except Exception as err:
-        print(err)
+        print(f'Error getting token price :{err}')
+        
+get_token_price('BTC/USDT')
