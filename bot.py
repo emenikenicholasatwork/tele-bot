@@ -1,13 +1,15 @@
 from dotenv import load_dotenv
 load_dotenv()
 import os
-from telegram.ext import ContextTypes, Updater, Application, CommandHandler
+from telegram.ext import ContextTypes, Updater, Application, CommandHandler, CallbackQueryHandler, CallbackContext, MessageHandler, filters
 from telegram import Update, ForceReply, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
 from wallet import create_new_account
 BOT_TOKEN = os.getenv('TOKEN')
 
 
+TOKEN_NAME = 1
+WITHDRAW = 2
 
 
 class ELiteBot:
@@ -15,11 +17,13 @@ class ELiteBot:
         application = Application.builder().token(BOT_TOKEN).build()
         application.add_handler(CommandHandler("start", self.start_cmd))
         application.add_handler(CommandHandler("buy", self.buy_cmd))
+        application.add_handler(CallbackQueryHandler(self.button_clicked))
+        application.add_handler(MessageHandler(filters.TEXT, self.user_reply))
         application.run_polling(allowed_updates=Update.ALL_TYPES)
     
     
     async def start_cmd(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        address = await create_new_account(update.effective_user.id)
+        address = create_new_account(update.effective_user.id)
         text = f'''\n******** <b>Welcome to EliteBot</b> ********\n
 Introducing a cutting-edge bot crafted exclusively for easy execution & surveillance of crypto trading.
 
@@ -32,8 +36,8 @@ Fund your wallet and start trading
         inline_keyboard = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton(text='BUY', callback_data='buy_token'),
-                    InlineKeyboardButton(text='SELL', callback_data='sell_token')
+                    InlineKeyboardButton(text='BUY', callback_data='buy'),
+                    InlineKeyboardButton(text='SELL', callback_data='sell')
                 ],
                  [
                     InlineKeyboardButton(text='Positions', callback_data='position'),
@@ -59,10 +63,23 @@ Fund your wallet and start trading
             ]
         )
         
-        reply = await update.message.reply_text(text=text, reply_markup=inline_keyboard, parse_mode=ParseMode.HTML)
-        if reply:
-            print(f'massage sent successfully: {reply.to_dict()}')
+        await update.message.reply_text(text=text, reply_markup=inline_keyboard, parse_mode=ParseMode.HTML)
+       
+            
     
     async def buy_cmd(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
          answer = await update.message.reply_text(text="✏️ Enter the token address you want to buy: ")
-         print(answer)
+         
+    async def button_clicked(self, update: Update, context: CallbackContext) -> None:
+        query = update.callback_query
+        if query.data == 'buy':
+            context.user_data['state'] = TOKEN_NAME
+            await query.message.reply_text(text='✏️ Enter the token to buy and base token e.g BTC/USDT : ', reply_markup=ForceReply())
+            print(update.message)
+    
+    async def user_reply(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        if context.user_data.get('state') == TOKEN_NAME:
+            pass
+    
+    async def help_cmd(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+        await update.message.reply_text('Help command')

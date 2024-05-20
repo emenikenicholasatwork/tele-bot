@@ -33,10 +33,9 @@ def create_new_account(telegram_user_id):
     
 def get_token_price(token):
     try:
-        ticker = exchange.fetch_ticker("BTC/USDT")
+        ticker = exchange.fetch_ticker(token)
         print(ticker)
         return ticker
     except Exception as err:
         print(f'Error getting token price :{err}')
         
-get_token_price('BTC/USDT')
