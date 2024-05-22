@@ -37,5 +37,5 @@ def get_token_price(token):
         print(ticker)
         return ticker
     except Exception as err:
-        print(f'Error getting token price :{err}')
+        return None
         

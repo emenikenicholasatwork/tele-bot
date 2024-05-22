@@ -4,15 +4,15 @@ import os
 from telegram.ext import ContextTypes, Updater, Application, CommandHandler, CallbackQueryHandler, CallbackContext, MessageHandler, filters
 from telegram import Update, ForceReply, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.constants import ParseMode
-from wallet import create_new_account
+from wallet import create_new_account, get_token_price
 BOT_TOKEN = os.getenv('TOKEN')
 
-
-TOKEN_NAME = 1
+BUY_TOKEN_NAME = 1
 WITHDRAW = 2
 
 
 class ELiteBot:
+    message = 0
     def __init__(self) -> None:
         application = Application.builder().token(BOT_TOKEN).build()
         application.add_handler(CommandHandler("start", self.start_cmd))
@@ -20,7 +20,6 @@ class ELiteBot:
         application.add_handler(CallbackQueryHandler(self.button_clicked))
         application.add_handler(MessageHandler(filters.TEXT, self.user_reply))
         application.run_polling(allowed_updates=Update.ALL_TYPES)
-    
     
     async def start_cmd(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         address = create_new_account(update.effective_user.id)
@@ -68,18 +67,35 @@ Fund your wallet and start trading
             
     
     async def buy_cmd(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-         answer = await update.message.reply_text(text="✏️ Enter the token address you want to buy: ")
+         token_name = update.message.text
+         try:
+            token_details = get_token_price(token_name)
+            if token_details:
+                print(token_name)
+            else:
+                last_message = context.user_data.get('last_message')
+                await context.bot.delete_message(last_message.chat_id, last_message.message_id)
+                await update.message.reply_text("Please enter a valid token symbol e.g BTC/USDT..", reply_markup=ForceReply)
+         except Exception as e:
+             print(e)
          
     async def button_clicked(self, update: Update, context: CallbackContext) -> None:
         query = update.callback_query
         if query.data == 'buy':
-            context.user_data['state'] = TOKEN_NAME
-            await query.message.reply_text(text='✏️ Enter the token to buy and base token e.g BTC/USDT : ', reply_markup=ForceReply())
-            print(update.message)
+            context.user_data['state'] = BUY_TOKEN_NAME
+            reply = await query.message.reply_text(text='✏️ Enter the token to buy and base token e.g BTC/USDT : ', reply_markup=ForceReply())
+            context.user_data['last_message'] = reply
+            
+        elif query.data == 'withdraw':
+            context.user_data['state'] = WITHDRAW
+            await query.message.reply_text(text='✏️ Enter the address you want to withdraw funds..?', reply_markup= ForceReply())
     
     async def user_reply(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        if context.user_data.get('state') == TOKEN_NAME:
-            pass
+        if context.user_data.get('state') == BUY_TOKEN_NAME:
+            try:
+                await self.buy_cmd(update, context)
+            except Exception as e:
+                print(f'Error while trying to perform buy token operation.')
     
     async def help_cmd(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text('Help command')
