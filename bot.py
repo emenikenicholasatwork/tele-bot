@@ -69,13 +69,11 @@ Fund your wallet and start trading
     async def buy_cmd(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
          token_name = update.message.text
          try:
-            token_details = get_token_price(token_name)
+            token_details = await get_token_price(token_name)
             if token_details:
-                print(token_name)
+                await update.message.reply_text(f"The price of {token_name} is ${token_details}.")
             else:
-                last_message = context.user_data.get('last_message')
-                await context.bot.delete_message(last_message.chat_id, last_message.message_id)
-                await update.message.reply_text("Please enter a valid token symbol e.g BTC/USDT..", reply_markup=ForceReply)
+                await update.message.reply_text("Please enter a valid token symbol e.g BTC/USDT...", reply_markup=ForceReply())
          except Exception as e:
              print(e)
          
@@ -83,8 +81,7 @@ Fund your wallet and start trading
         query = update.callback_query
         if query.data == 'buy':
             context.user_data['state'] = BUY_TOKEN_NAME
-            reply = await query.message.reply_text(text='✏️ Enter the token to buy and base token e.g BTC/USDT : ', reply_markup=ForceReply())
-            context.user_data['last_message'] = reply
+            await query.message.reply_text(text='✏️ Enter the token to buy and base token e.g BTC/USDT : ', reply_markup=ForceReply())
             
         elif query.data == 'withdraw':
             context.user_data['state'] = WITHDRAW
