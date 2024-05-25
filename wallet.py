@@ -31,9 +31,9 @@ def create_new_account(telegram_user_id):
         print(e)
             
             
-async def get_token_price(token):
+def get_token_price(token):
     try:
-        ticker = await exchange.fetch_ticker(token)
+        ticker = exchange.fetch_ticker(token)
         print(ticker)
         return ticker
     except Exception as err:

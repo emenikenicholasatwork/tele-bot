@@ -69,9 +69,9 @@ Fund your wallet and start trading
     async def buy_cmd(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
          token_name = update.message.text
          try:
-            token_details = await get_token_price(token_name)
+            token_details = get_token_price(token_name)
             if token_details:
-                await update.message.reply_text(f"The price of {token_name} is ${token_details}.")
+                await update.message.reply_text(f"The price of {token_name} is ${token_details['last']}.")
             else:
                 await update.message.reply_text("Please enter a valid token symbol e.g BTC/USDT...", reply_markup=ForceReply())
          except Exception as e:
